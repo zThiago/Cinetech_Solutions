@@ -57,14 +57,14 @@ class Filme {
 
         // Executa a inserção do filme no banco de dados
         if ($stmt->execute()) {
-            // Obtém o ID gerado para o novo filme
+            // Pega o ID gerado para o novo filme
             $novoId = $this->conn->lastInsertId();
-            $this->id = $novoId; // atualiza o atributo id do objeto (opcional)
+            $this->id = $novoId; // atualiza o atributo id do objeto - opcional
 
             // Se houver gêneros associados fornecidos, insere cada associação na tabela filmes_generos
             if (!empty($dados['generos']) && is_array($dados['generos'])) {
                 foreach ($dados['generos'] as $generoId) {
-                    // Garante que o ID do gênero seja um número inteiro para segurança
+                    // Garante que o ID do genero seja um número inteiro para segurança
                     $generoIdLimpo = intval($generoId);
                     $sqlPivot = "INSERT INTO filmes_generos (filme_id, genero_id) 
                                  VALUES (:filme_id, :genero_id)";
