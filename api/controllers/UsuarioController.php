@@ -26,4 +26,26 @@ class UsuarioController {
             return ["success" => false, "message" => "Erro ao cadastrar usuário."];
         }
     }
+
+    public function login($email, $senha) {
+        if (empty($email) || empty($senha)) {
+            return ["success" => false, "message" => "Email e senha são obrigatórios."];
+        }
+    
+        $this->usuario->email = htmlspecialchars(strip_tags($email));
+        $usuario = $this->usuario->readByEmail();
+    
+        if ($usuario && password_verify($senha, $usuario->senha)) {
+            // Remova a senha antes de retornar por segurança
+            unset($usuario->senha);
+    
+            return [
+                "success" => true,
+                "message" => "Login realizado com sucesso!",
+                "data" => $usuario
+            ];
+        }
+    
+        return ["success" => false, "message" => "Email ou senha incorretos."];
+    }
 }

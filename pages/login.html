@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | CineTech Solutions</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-gray-900 flex items-center justify-center h-screen">
+  <div class="bg-gray-800 p-6 rounded-lg shadow-md w-96">
+    <h1 class="text-xl text-white font-bold text-center mb-4">CineTech Solutions</h1>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Email" required
+        class="w-full p-2 rounded mb-3 bg-gray-700 text-white placeholder-gray-400">
+      
+      <input type="password" id="senha" placeholder="Senha" required
+        class="w-full p-2 rounded mb-3 bg-gray-700 text-white placeholder-gray-400">
+      
+      <div class="flex items-center mb-4">
+        <input type="checkbox" id="lembrar" class="mr-2">
+        <label for="lembrar" class="text-white">Lembrar-me</label>
+      </div>
+
+      <button type="submit"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded">
+        Entrar
+      </button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+
+      // Exemplo básico de integração com backend (ajuste conforme sua API real)
+      try {
+        const response = await fetch('http://localhost/cinetech/api/?request=usuarios&acao=login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha })
+        });
+
+        const result = await response.json();
+       
+
+        if (result.success) {
+          alert('Login realizado com sucesso!');
+          // Redirecionar o usuário para página home após login bem-sucedido
+          window.location.href = '../pages/home.html';
+        } else {
+          console.log(result)
+          alert(result);
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Erro ao fazer login.');
+      }
+    });
+  </script>
+</body>
+</html>
