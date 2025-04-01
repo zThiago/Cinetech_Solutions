@@ -52,7 +52,7 @@ async function carregarFilmesPorGenero() {
         <h4>${genero}</h4>
         <div class="carousel-filmes">
           ${filmesDoGenero.map(filme => `
-            <div class="card card-filme bg-dark text-white">
+            <div class="card card-filme bg-slate-800 dark:bg-dark text-white">
               <img src="../${filme.capa}" class="card-img-top" alt="${filme.titulo}">
               <div class="card-body">
                 <h6 class="card-title">${filme.titulo}</h6>
@@ -74,10 +74,10 @@ async function carregarFilmesPorGenero() {
   }
 }
 
-function mostrarToast(mensagem) {
+function mostrarToast(mensagem, tipo = 'danger') {
   const toastHTML = `
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 5;">
-      <div id="liveToast" class="toast align-items-center text-bg-danger border-0" role="alert">
+      <div id="liveToast" class="toast align-items-center text-bg-${tipo} border-0" role="alert">
         <div class="d-flex">
           <div class="toast-body">${mensagem}</div>
           <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
@@ -116,7 +116,7 @@ function buscarFilmes(termo) {
 
   filtrados.forEach(filme => {
     bloco.innerHTML += `
-      <div class="card card-filme bg-dark text-white">
+      <div class="card card-filme card-filme bg-gray dark:bg-gray text-white">
         <img src="../${filme.capa}" class="card-img-top" alt="${filme.titulo}">
         <div class="card-body">
           <h6 class="card-title">${filme.titulo}</h6>
@@ -129,3 +129,31 @@ function buscarFilmes(termo) {
 
   container.appendChild(bloco);
 }
+
+
+// CONFIGURAÇÃO DO MODAL
+document.getElementById('imagemPerfilInput').addEventListener('change', function () {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      document.getElementById('previewPerfil').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+document.getElementById('salvarConfig').addEventListener('click', () => {
+  const novaSenha = document.getElementById('novaSenha').value;
+  const tema = document.getElementById('temaSelect').value;
+
+  // Trocar tema localmente
+  document.body.classList.toggle('bg-light', tema === 'light');
+  document.body.classList.toggle('bg-dark', tema === 'dark');
+  document.body.style.color = tema === 'light' ? '#000' : '#fff';
+
+  // Toast de feedback
+  mostrarToast('Configurações salvas (simulação).', 'success');
+
+  // Simular envio da senha/imagem, caso deseje implementar futuramente
+});
