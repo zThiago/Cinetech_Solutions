@@ -46,12 +46,13 @@
        
 
         if (result.success) {
+          localStorage.setItem('usuario', JSON.stringify(result.data));
           alert('Login realizado com sucesso!');
           // Redirecionar o usuário para página home após login bem-sucedido
           window.location.href = '../pages/home.html';
         } else {
           console.log(result)
-          alert(result);
+          alert(result.message);
         }
       } catch (error) {
         console.error(error);

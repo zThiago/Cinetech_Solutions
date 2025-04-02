@@ -48,16 +48,16 @@
       <ul class="navbar-nav ms-3">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-            <img src="../assets/imagens/default_profile.png" alt="Perfil" width="30" height="30" class="rounded-circle">
+            <img src="../assets/imagens/default_profile.png" id="iconePerfil" alt="Perfil" width="30" height="30" class="rounded-circle">
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#configModal">Configurações</a>
             </li>
-            <li><a class="dropdown-item" href="#">Deslogar</a></li>
+            <li><a class="dropdown-item" id="btnLogout" href="#">Deslogar</a></li>
             <li>
               <hr class="dropdown-divider">
             </li>
-            <li><a class="dropdown-item" href="../pages/admin/home.html">Área Administrativa</a></li>
+            <li><a class="dropdown-item" id="adminLink" href="../pages/admin/home.html">Área Administrativa</a></li>
           </ul>
         </li>
       </ul>
@@ -66,7 +66,7 @@
 
   <!-- conteudo principal (carrossel de filmes) -->
   <div class="container my-4" id="generos-container">
-    
+
   </div>
 
   <!-- Modal de Configuração -->
@@ -82,11 +82,12 @@
           <!-- Trocar Imagem -->
           <div class="mb-3">
             <label class="form-label">Imagem de Perfil</label>
-            <input type="file" accept="image/*" class="form-control" id="imagemPerfilInput">
+            <input type="file" class="form-control" id="imagemPerfilInput">
             <div class="mt-2">
-              <img id="previewPerfil" src="../assets/imagens/user.png" class="rounded-circle" width="60" alt="Preview">
+              <img id="previewPerfil" src="../assets/imagens/default_profile.png" class="rounded-circle" width="60" alt="Preview">
             </div>
           </div>
+
 
           <!-- Trocar Senha -->
           <div class="mb-3">
