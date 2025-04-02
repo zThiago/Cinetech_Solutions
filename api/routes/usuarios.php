@@ -2,22 +2,40 @@
 require_once './controllers/UsuarioController.php';
 
 $controller = new UsuarioController($db);
-
-// Obtém ação pela URL, padrão para "login"
 $acao = $_GET['acao'] ?? '';
+$id = $_GET['id'] ?? null;
 
-switch ($acao) {
-    case 'login':
-        // Recebe dados de entrada (JSON)
-        $dados = json_decode(file_get_contents('php://input'), true);
+$method = $_SERVER['REQUEST_METHOD'];
 
-        // Chama método login que iremos criar no controller
-        $response = $controller->login($dados['email'], $dados['senha']);
-        break;
-
-    default:
-        http_response_code(400);
-        $response = ["success" => false, "message" => "Ação não especificada ou inválida."];
+// Rota especial para login
+if ($method === 'POST' && $acao === 'login') {
+  $dados = json_decode(file_get_contents("php://input"), true);
+  echo json_encode($controller->login($dados['email'], $dados['senha']));
+  exit();
 }
 
-echo json_encode($response);
+// CRUD completo
+switch ($method) {
+  case 'GET':
+    echo json_encode($controller->readAll());
+    break;
+
+  case 'POST':
+    $dados = json_decode(file_get_contents("php://input"), true);
+    echo json_encode($controller->create($dados));
+    break;
+
+  case 'PUT':
+    $dados = json_decode(file_get_contents("php://input"), true);
+    echo json_encode($controller->update($id, $dados));
+    break;
+
+  case 'DELETE':
+    echo json_encode($controller->delete($id));
+    break;
+
+  default:
+    http_response_code(405);
+    echo json_encode(["success" => false, "message" => "Método não permitido"]);
+    break;
+}

@@ -53,4 +53,54 @@ class Usuario {
 
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
+
+    // Ler todos os usuários
+    public function readAll() {
+        $query = "SELECT * FROM " . $this->table_name;
+        $stmt = $this->conn->prepare($query);
+        if($stmt->execute()) {
+          return $stmt->fetchAll(PDO::FETCH_OBJ);
+        }else {
+          return false;
+        }
+    }
+      
+      public function update() {
+        $query = "UPDATE usuarios SET nome = :nome, email = :email, is_admin = :is_admin, imagem_perfil = :imagem_perfil";
+      
+        if ($this->senha) {
+          $query .= ", senha = :senha";
+        }
+      
+        $query .= " WHERE id = :id";
+      
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":nome", $this->nome);
+        $stmt->bindParam(":email", $this->email);
+        $stmt->bindParam(":is_admin", $this->is_admin);
+        $stmt->bindParam(":id", $this->id);
+        $stmt->bindParam(":imagem_perfil", $this->imagem_perfil);
+      
+        if ($this->senha) {
+          $stmt->bindParam(":senha", $this->senha);
+        }
+      
+        return $stmt->execute();
+      }
+      
+      public function delete() {
+        $query = "DELETE FROM usuarios WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":id", $this->id);
+        return $stmt->execute();
+      }
+
+      public function readById($id) {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id = :id LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_OBJ);
+      }
+      
 }

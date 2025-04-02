@@ -29,6 +29,9 @@ switch ($request) {
     case 'generos':
         require_once 'routes/generos.php';
         break;
+    case 'estatisticas':
+        require_once 'routes/estatisticas.php';
+        break;
     default:
         http_response_code(404);
         echo json_encode(["message" => "Rota não encontrada."]);
