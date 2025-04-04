@@ -64,10 +64,42 @@
     </div>
   </nav>
 
+  <div class="container my-3" id="filtroGeneroContainer">
+    <label for="filtroGenero" class="form-label text-white">Filtrar por Gênero:</label>
+    <select id="filtroGenero" class="form-select w-auto d-inline-block">
+      <option value="todos">Todos</option>
+    </select>
+  </div>
+
   <!-- conteudo principal (carrossel de filmes) -->
   <div class="container my-4" id="generos-container">
 
   </div>
+
+  <!-- Modal de Trailer -->
+<div class="modal fade" id="modalTrailer" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-dark">
+      <div class="modal-header border-0">
+        <h5 class="modal-title text-white" id="tituloModalTrailer"></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="ratio ratio-16x9">
+          <iframe id="iframeTrailer" class="w-100" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <!-- Duração do Filme -->
+        <div class="mt-2">
+          <p id="duracaoFilme"></p>
+        </div>
+        <!-- Descrição do Filme -->
+        <div class="mt-2">
+          <p id="descricaoFilme"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- Modal de Configuração -->
   <div class="modal fade" id="configModal" tabindex="-1">

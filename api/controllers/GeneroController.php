@@ -1,17 +1,9 @@
 <?php
-require_once __DIR__ . '/../models/Genero.php';  // Inclui a classe Genero (model)
+require_once __DIR__ . '/../models/Genero.php'; 
 
-/**
- * Controller GeneroController - gerencia as requisições relacionadas a Gêneros.
- * Utiliza a classe Genero (model) para executar operações CRUD e formatar as respostas.
- */
 class GeneroController {
     private $model;
 
-    /**
-     * Construtor do GeneroController.
-     * @param PDO $pdo Conexão PDO a ser utilizada pelo model Genero.
-     */
     public function __construct($pdo) {
         $this->model = new Genero($pdo);
     }

@@ -23,7 +23,7 @@ if (!isset($_FILES['imagem'])) {
 $arquivo = $_FILES['imagem'];
 $ext = pathinfo($arquivo['name'], PATHINFO_EXTENSION);
 $nomeArquivo = uniqid() . '.' . $ext;
-$caminho = '../uploads/' . $nomeArquivo;
+$caminho = '../frontend/uploads/' . $nomeArquivo;
 
 if (move_uploaded_file($arquivo['tmp_name'], $caminho)) {
     echo json_encode([

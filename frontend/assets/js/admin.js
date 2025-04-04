@@ -259,11 +259,11 @@ async function salvarFilme() {
   if (capaInput.files.length > 0) {
     const formData = new FormData();
     formData.append('imagem', capaInput.files[0]);
-
-    const uploadRes = await fetch('http://localhost/cinetech/api/upload.php', {
+    const uploadRes = await fetch(API_URL+'upload.php', {
       method: 'POST',
       body: formData
     });
+    console.log(uploadRes)
 
     const uploadData = await uploadRes.json();
     if (!uploadData.success) {
@@ -272,7 +272,7 @@ async function salvarFilme() {
     }
     capaPath = uploadData.arquivo;
   } else {
-    capaPath = document.getElementById('filmeCapa').value || '';
+    capaPath = document.getElementById('previewCapa').value || '';
   }
 
   const dados = { titulo, descricao, link_trailer, duracao, data_lancamento, capa: capaPath, generos };

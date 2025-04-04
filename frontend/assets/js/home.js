@@ -1,4 +1,5 @@
 let todosFilmes = []; // variável global com todos os filmes
+let Tema;
 
 document.addEventListener('DOMContentLoaded', () => {
   const usuario = JSON.parse(localStorage.getItem('usuario'));
@@ -15,30 +16,39 @@ document.addEventListener('DOMContentLoaded', () => {
   let previewProfile = document.getElementById('previewPerfil');
 
   let ImageProfile = usuario.imagem_perfil ? `../../${usuario.imagem_perfil}` : '../../assets/imagens/default_profile.png';
-  
+
   previewProfile.src = ImageProfile;
-  profileImage.src =ImageProfile
+  profileImage.src = ImageProfile
 
   // carregar tema nos cookie
-  const temaCookie = document.cookie.replace(/(?:(?:^|.*;\s*)tema\s*\=\s*([^;]*).*$)|^.*$/, '$1');
-  if (temaCookie) {
-    aplicarTema(temaCookie);
+  Tema = document.cookie.replace(/(?:(?:^|.*;\s*)tema\s*\=\s*([^;]*).*$)|^.*$/, '$1');
+  if (Tema) {
+    aplicarTema(Tema);
   }
-  
+
   console.log(usuario)
 
   carregarFilmesPorGenero();
+  carregarGenerosParaFiltro();
   const formBusca = document.getElementById('formBusca');
+
+  let filterGenero = document.getElementById('filtroGeneroContainer');
+
   formBusca.addEventListener('submit', e => {
     e.preventDefault();
     const termo = document.getElementById('campoBusca').value.trim().toLowerCase();
     buscarFilmes(termo);
   });
 
+  document.getElementById('filtroGenero').addEventListener('change', e => {
+    const generoSelecionado = e.target.value;
+    carregarFilmesPorGenero(generoSelecionado);
+  });
 
 });
 
-async function carregarFilmesPorGenero() {
+async function carregarFilmesPorGenero(filtroGenero = 'todos') {
+  
   try {
     const res = await fetch('http://localhost/cinetech/api/?request=filmes');
     const resultado = await res.json();
@@ -66,21 +76,22 @@ async function carregarFilmesPorGenero() {
 
     // Criar carrossel para cada gênero
     for (const genero in generosMap) {
+     if (filtroGenero !== 'todos' && genero !== filtroGenero) continue;
+     console.log(genero, filtroGenero)
       const filmesDoGenero = generosMap[genero];
 
       const bloco = document.createElement('div');
       bloco.classList.add('mb-4');
-
       bloco.innerHTML = `
-        <h4>${genero}</h4>
+        <h4 class="mb-3 text-light">${genero}</h4>
         <div class="carousel-filmes">
           ${filmesDoGenero.map(filme => `
             <div class="card card-filme bg-dark text-white">
               <img src="../../${filme.capa}" class="card-img-top" alt="${filme.titulo}">
               <div class="card-body">
-                <h6 class="card-title">${filme.titulo}</h6>
-                <a href="${filme.link_trailer}" target="_blank" class="btn btn-primary btn-sm">
-                  <i class="bi bi-play-circle"></i> Trailer
+                <h6 class="card-title " style="width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${filme.titulo}</h6>
+                <a href="#" class="btn btn-primary btn-sm mb-2" onclick="abrirTrailer('${filme.link_trailer}', '${filme.descricao}', '${filme.titulo}', '${filme.duracao}')">
+                  <i class="bi bi-play-circle"></i> Informações
                 </a>
               </div>
             </div>
@@ -140,19 +151,68 @@ function buscarFilmes(termo) {
   filtrados.forEach(filme => {
 
     bloco.innerHTML += `
-      <div class="card card-filme card-filme bg-gray dark:bg-gray text-white">
+      <div class="card card-filme card-filme bg-dark text-white">
         <img src="../../${filme.capa}" class="card-img-top" alt="${filme.titulo}">
         
         <div class="card-body">
           <h6 class="card-title">${filme.titulo}</h6>
           <a href="${filme.link_trailer}" target="_blank" class="btn btn-primary btn-sm">
-            <i class="bi bi-play-circle"></i> Trailer
+            <i class="bi bi-play-circle"></i> Informações
           </a>
         </div>
       </div>`;
   });
 
   container.appendChild(bloco);
+}
+
+function abrirTrailer(link, descricao, nome, duracao) {
+  const modal = new bootstrap.Modal(document.getElementById('modalTrailer'));
+  const descricaoFilme = document.getElementById('descricaoFilme');
+  const nomeFilme = document.getElementById('tituloModalTrailer');
+  const duracaoFilme = document.getElementById('duracaoFilme');
+  const iframe = document.getElementById('iframeTrailer');
+  
+  // Converter para embed (se for YouTube)
+  const embedLink = transformarParaEmbed(link);
+  iframe.src = embedLink;
+
+  descricaoFilme.innerText = descricao;
+  nomeFilme.innerText = nome;
+  duracaoFilme.innerText = duracao+' minutos';
+
+  modal.show();
+
+  // Limpa o vídeo quando fechar o modal
+  document.getElementById('modalTrailer').addEventListener('hidden.bs.modal', () => {
+    iframe.src = '';
+  }, { once: true });
+}
+
+async function carregarGenerosParaFiltro() {
+  const res = await fetch('http://localhost/cinetech/api/?request=generos');
+  const result = await res.json();
+
+  if (result.success) {
+    const select = document.getElementById('filtroGenero');
+    result.data.forEach(genero => {
+      const option = document.createElement('option');
+      option.value = genero.nome;
+      option.textContent = genero.nome;
+      select.appendChild(option);
+    });
+  }
+}
+
+function transformarParaEmbed(url) {
+  if (url.includes("youtube.com/watch?v=")) {
+    const videoId = url.split("v=")[1].split("&")[0];
+    return `https://www.youtube.com/embed/${videoId}`;
+  } else if (url.includes("youtu.be/")) {
+    const videoId = url.split("youtu.be/")[1];
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+  return url; // fallback: retorna original se não for YouTube
 }
 
 // CONFIGURAÇÃO DO MODAL
@@ -222,8 +282,10 @@ document.getElementById('salvarConfig').addEventListener('click', async () => {
     atualizarImagemTopo();
 
     // Armazenar o tema - Cookies
+    Tema = tema;
     document.cookie = `tema=${tema}; expires=${new Date(Date.now() + 24 * 60 * 60 * 1000).toUTCString()}; path=/`;
     aplicarTema(tema);
+    window.location.reload();
 
     mostrarToast('Configurações salvas com sucesso!', 'success');
   } else {
@@ -236,6 +298,13 @@ function aplicarTema(tema) {
   body.classList.toggle('bg-light', tema === 'light');
   body.classList.toggle('bg-dark', tema === 'dark');
   body.style.color = tema === 'light' ? '#000' : '#fff';
+
+  const cards = document.querySelectorAll('.card-filme');
+  cards.forEach(card => {
+    card.classList.toggle('bg-gray', tema === 'light'); // Altera a cor de fundo
+    card.classList.toggle('dark:bg-gray', tema === 'dark'); // Altera a cor de fundo
+    card.style.color = tema === 'light' ? '#000' : '#fff'; // Altera a cor do texto
+  });
 }
 
 document.getElementById('btnLogout').addEventListener('click', () => {
